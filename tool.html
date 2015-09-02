@@ -19,13 +19,107 @@
 <script type="text/javascript">
   
   $(document).ready( function() {
-    
+
+    $(window).bind('keydown', function(e) {
+      window.alert('Start!');
+      startTracking();
+    });
+
   });
+
+  var startTracking = function() {
+    var posX = -1, posY = -1;
+    var markX = -1, markY = -1;
+
+    $("body").mousemove(function(e) {
+      if (e.pageX > posX) {
+        $('#direction-x').text('+' + e.pageX);
+
+        if (e.pageX - markX > 10) {
+          if (markX != -1) {
+            // scroll the highlight
+          }
+          markX = e.pageX;
+        }
+        
+      } else {
+        $('#direction-x').text('-' + e.pageX);
+      }
+      posX = e.pageX;
+
+      if (e.pageY > posY) {
+        $('#direction-y').text('+' + e.pageY);
+      } else {
+        $('#direction-y').text('-' + e.pageY);
+      }
+      posY = e.pageY;
+
+      var msg = new SpeechSynthesisUtterance('Hello World');
+      window.speechSynthesis.speak(msg);
+    })
+  }
+
 </script>
 
 
 </head>
 <body>
-yo!
+
+<div id="coord">
+  <span id="direction-x"></span> <span id="direction-y"></span> </span>
+</div>
+
+<div id="content-text">
+  Hey Jude, don't make it bad<br>
+  Take a sad song and make it better<br>
+  Remember to let her into your heart<br>
+  Then you can start to make it better<br>
+  <br>
+  Hey Jude, don't be afraid<br>
+  You were made to go out and get her<br>
+  The minute you let her under your skin<br>
+  Then you begin to make it better<br>
+  <br>
+  And anytime you feel the pain, hey Jude, refrain<br>
+  Don't carry the world upon your shoulders<br>
+  For well you know that it's a fool who plays it cool<br>
+  By making his world a little colder<br>
+  Nah nah nah nah nah nah nah nah nah<br>
+  <br>
+  Hey Jude, don't let me down<br>
+  You have found her, now go and get her<br>
+  Remember to let her into your heart<br>
+  Then you can start to make it better<br>
+  <br>
+  So let it out and let it in, hey Jude, begin<br>
+  You're waiting for someone to perform with<br>
+  And don't you know that it's just you, hey Jude, you'll do<br>
+  The movement you need is on your shoulder<br>
+  Nah nah nah nah nah nah nah nah nah yeah<br>
+  <br>
+  Hey Jude, don't make it bad<br>
+  Take a sad song and make it better<br>
+  Remember to let her under your skin<br>
+  Then you'll begin to make it<br>
+  Better better better better better better, oh<br>
+  <br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  Nah nah nah nah nah nah, nah nah nah, hey Jude
+</div>
+
 </body>
 </html>
