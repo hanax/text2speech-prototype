@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Navigate your text</title>
 <link rel="icon" href="src/favicon.png" type="image/png" />
@@ -85,6 +85,9 @@
         if (e.pageX - markX > 100) {
           if (markX != -1) {
             ii ++;
+            $("#direction-plus").text(ii);
+            $("#direction-plus").show();
+            $("#direction-minus").hide();
 
             // scroll the text
             window.speechSynthesis.cancel();
@@ -98,6 +101,9 @@
         if (markX - e.pageX > 100) {
           if (markX != -1) {
             ii --;
+            $("#direction-minus").text(ii);
+            $("#direction-minus").show();
+            $("#direction-plus").hide();
 
             // scroll the text
             window.speechSynthesis.cancel();
@@ -126,69 +132,94 @@
 </head>
 <body>
 
-<div id="coord">
-  <span id="direction-x"></span> <span id="direction-y"></span>
-</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Content</h3>
+        </div>
+        <div id="content-text" class="panel-body">
+          <p>
+            Hey Jude, don't make it bad<br>
+            Take a sad song and make it better<br>
+            Remember to let her into your heart<br>
+            Then you can start to make it better<br>
+          </p>
+          <p>
+            Hey Jude, don't be afraid<br>
+            You were made to go out and get her<br>
+            The minute you let her under your skin<br>
+            Then you begin to make it better<br>
+          </p>
+          <p>
+            And anytime you feel the pain, hey Jude, refrain<br>
+            Don't carry the world upon your shoulders<br>
+            For well you know that it's a fool who plays it cool<br>
+            By making his world a little colder<br>
+            Nah nah nah nah nah nah nah nah nah<br>
+          </p>
+          <p>
+            Hey Jude, don't let me down<br>
+            You have found her, now go and get her<br>
+            Remember to let her into your heart<br>
+            Then you can start to make it better<br>
+          </p>
+          <p>
+            So let it out and let it in, hey Jude, begin<br>
+            You're waiting for someone to perform with<br>
+            And don't you know that it's just you, hey Jude, you'll do<br>
+            The movement you need is on your shoulder<br>
+            Nah nah nah nah nah nah nah nah nah yeah<br>
+          </p>
+          <p>
+            Hey Jude, don't make it bad<br>
+            Take a sad song and make it better<br>
+            Remember to let her under your skin<br>
+            Then you'll begin to make it<br>
+            Better better better better better better, oh<br>
+          </p>   
+          <p>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br> 
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+          </p>
+        </div>
+      </div>
+    </div>
 
-<div id="content-text">
-  <p>
-    Hey Jude, don't make it bad<br>
-    Take a sad song and make it better<br>
-    Remember to let her into your heart<br>
-    Then you can start to make it better<br>
-  </p>
-  <p>
-    Hey Jude, don't be afraid<br>
-    You were made to go out and get her<br>
-    The minute you let her under your skin<br>
-    Then you begin to make it better<br>
-  </p>
-  <p>
-    And anytime you feel the pain, hey Jude, refrain<br>
-    Don't carry the world upon your shoulders<br>
-    For well you know that it's a fool who plays it cool<br>
-    By making his world a little colder<br>
-    Nah nah nah nah nah nah nah nah nah<br>
-  </p>
-  <p>
-    Hey Jude, don't let me down<br>
-    You have found her, now go and get her<br>
-    Remember to let her into your heart<br>
-    Then you can start to make it better<br>
-  </p>
-  <p>
-    So let it out and let it in, hey Jude, begin<br>
-    You're waiting for someone to perform with<br>
-    And don't you know that it's just you, hey Jude, you'll do<br>
-    The movement you need is on your shoulder<br>
-    Nah nah nah nah nah nah nah nah nah yeah<br>
-  </p>
-  <p>
-    Hey Jude, don't make it bad<br>
-    Take a sad song and make it better<br>
-    Remember to let her under your skin<br>
-    Then you'll begin to make it<br>
-    Better better better better better better, oh<br>
-  </p>   
-  <p>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br> 
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  </p>
-  
+    <div class="col-md-4">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Instructions</h3>
+          </div>
+
+        <div class="panel-body">
+          <div id="coord">
+            <span id="direction-x" class="label label-info"></span> 
+            <span id="direction-y" class="label label-info"></span>
+            <span id="direction-plus" class="label label-success">0</span>
+            <span id="direction-minus" class="label label-danger" style="display:none"></span>
+          </div>
+          Press s to start. Press e to end.
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 </body>
