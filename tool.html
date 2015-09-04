@@ -16,22 +16,58 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 
+<style>
+  p.highlight {
+    font-weight: bold;
+    color: red;
+  }
+</style>
+
 <script type="text/javascript">
   
   $(document).ready( function() {
+    
+    $('#content-text').children('p').each(function () {
+      
+      var curText = $(this);
+      var msg = new SpeechSynthesisUtterance();
+      var voices = window.speechSynthesis.getVoices();
+      msg.voice = voices[10]; // Note: some voices don't support altering params
+      msg.voiceURI = 'native';
+      msg.volume = 1; // 0 to 1
+      msg.rate = 0.1; // 0.1 to 10
+      msg.pitch = 2; //0 to 2
+      msg.text = curText.text();
+      msg.lang = 'en-US';
+      //msg.rate = 10;
+      
+      msg.onstart = function(e) {
+        //alert('start');
+        curText.addClass('highlight');
+      }
+      
+      msg.onend = function(e) {
+        //alert('bye');
+        curText.removeClass('highlight');
+      };
 
-    $(window).bind('keydown', function(e) {
-      window.alert('Start!');
-      startTracking();
+      window.speechSynthesis.speak(msg);
     });
 
+
+    $(window).bind('keydown', function(e) {
+      //window.alert(e.keyCode);
+      if (e.keyCode == 83 /* s */) {
+        startTracking();
+      }
+    });
   });
 
   var startTracking = function() {
     var posX = -1, posY = -1;
     var markX = -1, markY = -1;
 
-    $("body").mousemove(function(e) {
+    $('body').mousemove(function(e) {
       if (e.pageX > posX) {
         $('#direction-x').text('+' + e.pageX);
 
@@ -41,7 +77,7 @@
           }
           markX = e.pageX;
         }
-        
+
       } else {
         $('#direction-x').text('-' + e.pageX);
       }
@@ -54,8 +90,6 @@
       }
       posY = e.pageY;
 
-      var msg = new SpeechSynthesisUtterance('Hello World');
-      window.speechSynthesis.speak(msg);
     })
   }
 
@@ -70,55 +104,64 @@
 </div>
 
 <div id="content-text">
-  Hey Jude, don't make it bad<br>
-  Take a sad song and make it better<br>
-  Remember to let her into your heart<br>
-  Then you can start to make it better<br>
-  <br>
-  Hey Jude, don't be afraid<br>
-  You were made to go out and get her<br>
-  The minute you let her under your skin<br>
-  Then you begin to make it better<br>
-  <br>
-  And anytime you feel the pain, hey Jude, refrain<br>
-  Don't carry the world upon your shoulders<br>
-  For well you know that it's a fool who plays it cool<br>
-  By making his world a little colder<br>
-  Nah nah nah nah nah nah nah nah nah<br>
-  <br>
-  Hey Jude, don't let me down<br>
-  You have found her, now go and get her<br>
-  Remember to let her into your heart<br>
-  Then you can start to make it better<br>
-  <br>
-  So let it out and let it in, hey Jude, begin<br>
-  You're waiting for someone to perform with<br>
-  And don't you know that it's just you, hey Jude, you'll do<br>
-  The movement you need is on your shoulder<br>
-  Nah nah nah nah nah nah nah nah nah yeah<br>
-  <br>
-  Hey Jude, don't make it bad<br>
-  Take a sad song and make it better<br>
-  Remember to let her under your skin<br>
-  Then you'll begin to make it<br>
-  Better better better better better better, oh<br>
-  <br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-  Nah nah nah nah nah nah, nah nah nah, hey Jude
+  <p>
+    Hey Jude, don't make it bad<br>
+    Take a sad song and make it better<br>
+    Remember to let her into your heart<br>
+    Then you can start to make it better<br>
+  </p>
+  <p>
+    Hey Jude, don't be afraid<br>
+    You were made to go out and get her<br>
+    The minute you let her under your skin<br>
+    Then you begin to make it better<br>
+  </p>
+  <p>
+    And anytime you feel the pain, hey Jude, refrain<br>
+    Don't carry the world upon your shoulders<br>
+    For well you know that it's a fool who plays it cool<br>
+    By making his world a little colder<br>
+    Nah nah nah nah nah nah nah nah nah<br>
+  </p>
+  <p>
+    Hey Jude, don't let me down<br>
+    You have found her, now go and get her<br>
+    Remember to let her into your heart<br>
+    Then you can start to make it better<br>
+  </p>
+  <p>
+    So let it out and let it in, hey Jude, begin<br>
+    You're waiting for someone to perform with<br>
+    And don't you know that it's just you, hey Jude, you'll do<br>
+    The movement you need is on your shoulder<br>
+    Nah nah nah nah nah nah nah nah nah yeah<br>
+  </p>
+  <p>
+    Hey Jude, don't make it bad<br>
+    Take a sad song and make it better<br>
+    Remember to let her under your skin<br>
+    Then you'll begin to make it<br>
+    Better better better better better better, oh<br>
+  </p>   
+  <p>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br> 
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+    Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
+  </p>
+  
 </div>
 
 </body>
