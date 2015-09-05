@@ -39,10 +39,10 @@
   });
 
   var readText = function(index) {
-    if (index < 0) {return;}
-
     var paras = $('#content-text').children('p');
     var cnt = $('#content-text').children('p').length;
+
+    if (index < 0 || index >= cnt) {return;}
     
     for (var i = index; i < cnt; i ++) {
       !function outer(ii){
@@ -77,13 +77,14 @@
     var posX = -1, posY = -1;
     var markX = -1, markY = -1;
     var ii = 0;
+    var cnt = $('#content-text').children('p').length;
 
     $('body').mousemove(function(e) {
       if (e.pageX > posX) { 
         $('#direction-x').text('+' + e.pageX);
 
         if (e.pageX - markX > 100) {
-          if (markX != -1) {
+          if (markX != -1 && ii < cnt-1) {
             ii ++;
             $("#direction-plus").text(ii);
             $("#direction-plus").show();
@@ -95,11 +96,12 @@
           }
           markX = e.pageX;
         }
+
       } else {
         $('#direction-x').text('-' + e.pageX);
 
         if (markX - e.pageX > 100) {
-          if (markX != -1) {
+          if (markX != -1 && ii > 0) {
             ii --;
             $("#direction-minus").text(ii);
             $("#direction-minus").show();
@@ -113,7 +115,6 @@
         }
       }
       posX = e.pageX;
-
 
       // Nothing controlled by Y value
       if (e.pageY > posY) {
