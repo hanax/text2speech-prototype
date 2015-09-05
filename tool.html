@@ -33,10 +33,28 @@
         startTracking();
       }
       if (e.keyCode == 69 /* e */) {
+        $(window).off('mousemove');
         window.speechSynthesis.cancel();
       }
     });
+
+    $('#btn-content').click(function() {
+      var text = $('#textarea-content').val();
+      text = text.replace(/\n\r?/g, '<br />'); 
+      $('#content-text').html(text);
+      $('#content-text')
+        .contents()
+          .filter(function() {
+            return this.nodeType === 3;
+          })
+            .wrap( "<p></p>" )
+            .end()
+          .filter( "br" )
+          .remove();
+      });
+
   });
+
 
   var readText = function(index) {
     var paras = $('#content-text').children('p');
@@ -79,7 +97,7 @@
     var ii = 0;
     var cnt = $('#content-text').children('p').length;
 
-    $('body').mousemove(function(e) {
+    $(window).mousemove(function(e) {
       if (e.pageX > posX) { 
         $('#direction-x').text('+' + e.pageX);
 
@@ -103,9 +121,9 @@
         if (markX - e.pageX > 100) {
           if (markX != -1 && ii > 0) {
             ii --;
-            $("#direction-minus").text(ii);
-            $("#direction-minus").show();
-            $("#direction-plus").hide();
+            $('#direction-minus').text(ii);
+            $('#direction-minus').show();
+            $('#direction-plus').hide();
 
             // scroll the text
             window.speechSynthesis.cancel();
@@ -140,64 +158,9 @@
         <div class="panel-heading">
           <h3 class="panel-title">Content</h3>
         </div>
-        <div id="content-text" class="panel-body">
-          <p>
-            Hey Jude, don't make it bad<br>
-            Take a sad song and make it better<br>
-            Remember to let her into your heart<br>
-            Then you can start to make it better<br>
-          </p>
-          <p>
-            Hey Jude, don't be afraid<br>
-            You were made to go out and get her<br>
-            The minute you let her under your skin<br>
-            Then you begin to make it better<br>
-          </p>
-          <p>
-            And anytime you feel the pain, hey Jude, refrain<br>
-            Don't carry the world upon your shoulders<br>
-            For well you know that it's a fool who plays it cool<br>
-            By making his world a little colder<br>
-            Nah nah nah nah nah nah nah nah nah<br>
-          </p>
-          <p>
-            Hey Jude, don't let me down<br>
-            You have found her, now go and get her<br>
-            Remember to let her into your heart<br>
-            Then you can start to make it better<br>
-          </p>
-          <p>
-            So let it out and let it in, hey Jude, begin<br>
-            You're waiting for someone to perform with<br>
-            And don't you know that it's just you, hey Jude, you'll do<br>
-            The movement you need is on your shoulder<br>
-            Nah nah nah nah nah nah nah nah nah yeah<br>
-          </p>
-          <p>
-            Hey Jude, don't make it bad<br>
-            Take a sad song and make it better<br>
-            Remember to let her under your skin<br>
-            Then you'll begin to make it<br>
-            Better better better better better better, oh<br>
-          </p>   
-          <p>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br> 
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-            Nah nah nah nah nah nah, nah nah nah, hey Jude<br>
-          </p>
+
+        <div class="panel-body">
+          <div id="content-text"></div>
         </div>
       </div>
     </div>
@@ -205,17 +168,21 @@
     <div class="col-md-4">
       <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Instructions</h3>
+            <h3 class="panel-title">Instruction</h3>
           </div>
 
         <div class="panel-body">
+          <div>
+            <textarea id="textarea-content" type="text" class="form-control"></textarea>
+            <button id="btn-content" class="btn btn-default" type="button" style="margin-top: 10px; margin-bottom: 10px;">Display</button>
+          </div>
           <div id="coord">
             <span id="direction-x" class="label label-info"></span> 
             <span id="direction-y" class="label label-info"></span>
-            <span id="direction-plus" class="label label-success">0</span>
+            <span id="direction-plus" class="label label-success" style="display:none"></span>
             <span id="direction-minus" class="label label-danger" style="display:none"></span>
           </div>
-          Press s to start. Press e to end.
+          After displaying the text, press <span class="label label-warning">s</span> to start and press <span class="label label-warning">e</span> to end. Move mouse horizontally to navigate.
         </div>
       </div>
     </div>
