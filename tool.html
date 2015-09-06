@@ -63,7 +63,7 @@
     if (index < 0 || index >= cnt) {return;}
     
     for (var i = index; i < cnt; i ++) {
-      !function outer(ii){
+      (function(ii){
         var curText = $(paras[ii]);
         var msg = new SpeechSynthesisUtterance();
         //var voices = window.speechSynthesis.getVoices();
@@ -78,7 +78,7 @@
         msg.onstart = function(e) {
           //alert('start');
           curText.addClass('highlight');
-        }
+        };
         
         msg.onend = function(e) {
           //alert('bye');
@@ -86,10 +86,10 @@
         };
 
         window.speechSynthesis.speak(msg);
-      }(i)
+      }(i));
     }
 
-  }
+  };
 
   var startTracking = function() {
     var posX = -1, posY = -1;
@@ -142,8 +142,8 @@
       }
       posY = e.pageY;
 
-    })
-  }
+    });
+  };
 
 </script>
 
