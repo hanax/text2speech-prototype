@@ -98,11 +98,47 @@
     var cnt = $('#content-text').children('p').length;
 
     $(window).mousemove(function(e) {
-      if (e.pageX > posX) { 
-        $('#direction-x').text('+' + e.pageX);
+      // if (e.pageX > posX) { 
+      //   $('#direction-x').text('+' + e.pageX);
 
-        if (e.pageX - markX > 100) {
-          if (markX != -1 && ii < cnt-1) {
+      //   if (e.pageX - markX > 100) {
+      //     if (markX != -1 && ii < cnt-1) {
+      //       ii ++;
+      //       $("#direction-plus").text(ii);
+      //       $("#direction-plus").show();
+      //       $("#direction-minus").hide();
+
+      //       // scroll the text
+      //       window.speechSynthesis.cancel();
+      //       readText(ii);
+      //     }
+      //     markX = e.pageX;
+      //   }
+
+      // } else {
+      //   $('#direction-x').text('-' + e.pageX);
+
+      //   if (markX - e.pageX > 100) {
+      //     if (markX != -1 && ii > 0) {
+      //       ii --;
+      //       $('#direction-minus').text(ii);
+      //       $('#direction-minus').show();
+      //       $('#direction-plus').hide();
+
+      //       // scroll the text
+      //       window.speechSynthesis.cancel();
+      //       readText(ii);
+      //     }
+      //     markX = e.pageX;
+      //   }
+      // }
+      // posX = e.pageX;
+
+      if (e.pageY > posY) { 
+        $('#direction-y').text('+' + e.pageY);
+
+        if (e.pageY - markY > 100) {
+          if (markY != -1 && ii < cnt-1) {
             ii ++;
             $("#direction-plus").text(ii);
             $("#direction-plus").show();
@@ -112,14 +148,13 @@
             window.speechSynthesis.cancel();
             readText(ii);
           }
-          markX = e.pageX;
+          markY = e.pageY;
         }
 
       } else {
-        $('#direction-x').text('-' + e.pageX);
-
-        if (markX - e.pageX > 100) {
-          if (markX != -1 && ii > 0) {
+        $('#direction-y').text('-' + e.pageY);
+        if (markY - e.pageY > 100) {
+          if (markY != -1 && ii > 0) {
             ii --;
             $('#direction-minus').text(ii);
             $('#direction-minus').show();
@@ -129,16 +164,8 @@
             window.speechSynthesis.cancel();
             readText(ii);
           }
-          markX = e.pageX;
+          markY = e.pageY;
         }
-      }
-      posX = e.pageX;
-
-      // Nothing controlled by Y value
-      if (e.pageY > posY) {
-        $('#direction-y').text('+' + e.pageY);
-      } else {
-        $('#direction-y').text('-' + e.pageY);
       }
       posY = e.pageY;
 
