@@ -63,34 +63,30 @@
 
     if (index < 0 || index >= cnt) {return;}
 
-    for (var i = index; i < index+1; i ++) {
-      !function outer(ii){
-        var curText = $(paras[ii]);
+    var curText = $(paras[index]);
 
-        var msg = new SpeechSynthesisUtterance();
-        //var voices = window.speechSynthesis.getVoices();
-        //msg.voice = voices[10]; // Note: some voices don't support altering params
-        msg.voiceURI = 'native';
-        msg.volume = 1; // 0 to 1
-        msg.rate = 1.3; // 0.1 to 10
-        msg.pitch = 1; //0 to 2
-        msg.text = curText.text();
-        msg.lang = 'en-US';
-        
-        msg.onstart = function(e) {
-          curText.addClass('highlight');
-          curIdx = ii;
-          //console.log('reading: ', curIdx);
-          $('#direction-y').text(curIdx);
-        }
-        
-        msg.onend = function(e) {
-          curText.removeClass('highlight');
-        };
-
-        window.speechSynthesis.speak(msg);
-      }(i)
+    var msg = new SpeechSynthesisUtterance();
+    //var voices = window.speechSynthesis.getVoices();
+    //msg.voice = voices[10]; // Note: some voices don't support altering params
+    msg.voiceURI = 'native';
+    msg.volume = 1; // 0 to 1
+    msg.rate = 1.3; // 0.1 to 10
+    msg.pitch = 1; //0 to 2
+    msg.text = curText.text();
+    msg.lang = 'en-US';
+    
+    msg.onstart = function(e) {
+      curText.addClass('highlight');
+      curIdx = index;
+      //console.log('reading: ', curIdx);
+      $('#direction-y').text(curIdx);
     }
+    
+    msg.onend = function(e) {
+      curText.removeClass('highlight');
+    };
+
+    window.speechSynthesis.speak(msg);
 
   }
 
