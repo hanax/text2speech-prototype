@@ -103,6 +103,7 @@
         if (e.deltaY > 0) {
 
           if (curIdx < cnt-1) {
+            console.log('yo',e.deltaY)
             window.speechSynthesis.cancel();
             readText(curIdx + e.deltaY);
           }
@@ -110,6 +111,7 @@
         } else if (e.deltaY < 0) {
 
           if (curIdx > 0) {
+            console.log('yo',e.deltaY)
             window.speechSynthesis.cancel();
             readText(curIdx + e.deltaY);
           }
