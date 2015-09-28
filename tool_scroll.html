@@ -62,8 +62,8 @@
     var cnt = $('#content-text').children('p').length;
 
     if (index < 0 || index >= cnt) {return;}
-    
-    for (var i = index; i < cnt; i ++) {
+
+    for (var i = index; i < index+1; i ++) {
       !function outer(ii){
         var curText = $(paras[ii]);
 
@@ -80,7 +80,7 @@
         msg.onstart = function(e) {
           curText.addClass('highlight');
           curIdx = ii;
-          console.log('reading: ', curIdx);
+          //console.log('reading: ', curIdx);
           $('#direction-y').text(curIdx);
         }
         
@@ -98,20 +98,20 @@
     var cnt = $('#content-text').children('p').length;
 
     $(window).mousewheel(function(e) {
-        $('#direction-y').text(e.deltaY);
+        console.log(e.deltaY);
 
         if (e.deltaY > 0) {
 
           if (curIdx < cnt-1) {
             window.speechSynthesis.cancel();
-            readText(curIdx + 1);
+            readText(curIdx + e.deltaY);
           }
 
         } else if (e.deltaY < 0) {
 
           if (curIdx > 0) {
             window.speechSynthesis.cancel();
-            readText(curIdx - 1);
+            readText(curIdx + e.deltaY);
           }
         }
     });
