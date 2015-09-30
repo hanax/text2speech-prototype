@@ -30,8 +30,6 @@
 
   $(document).ready( function() { 
     curIdx = 0;
-    cnt = $('#content-text').children('p').length;
-    paras = $('#content-text').children('p');
 
     $(window).bind('keydown', function(e) {
       //window.alert(e.keyCode);
@@ -65,6 +63,8 @@
   var startTracking = function() {
     $(window).mousewheel(function(e) {
       console.log(e.deltaY);
+      
+      cnt = $('#content-text').children('p').length;
       if (curIdx + e.deltaY > cnt - 1) curIdx = cnt - 1;
       else if (curIdx + e.deltaY < 0) curIdx = 0;
       else curIdx += e.deltaY;
@@ -84,6 +84,9 @@
   };
 
   var readText = function(index) {
+    cnt = $('#content-text').children('p').length;
+    paras = $('#content-text').children('p');
+
     if (index < 0) {curIdx = 0; return;}
     else if (index > cnt-1) {curIdx = cnt-1; return;}
 
