@@ -36,6 +36,8 @@
     $(window).bind('keydown', function(e) {
       //window.alert(e.keyCode);
       if (e.keyCode == 83 /* s */) {
+        cnt = $('#content-text').children('p').length;
+        paras = $('#content-text').children('p');
         readText(0);
         startTracking();
       }
@@ -46,9 +48,6 @@
     });
 
     $('#btn-content').click(function() {
-      cnt = $('#content-text').children('p').length;
-      paras = $('#content-text').children('p');
-
       var text = $('#textarea-content').val();
       text = text.replace(/\n\r?/g, '<br />'); 
       $('#content-text').html(text);
