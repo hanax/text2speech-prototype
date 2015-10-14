@@ -26,15 +26,32 @@
 <script type="text/javascript">
   var cnt;
   var paras;
-  var curIdx;
+
+  var curParaIdx;
+  var curSenIdx;
+
+  var scrollIdx;
+  var NCLICK = 24;
+
+  var mode;
+
+  function mod(n, m) {
+    return ((n % m) + m) % m;
+  }
 
   $(document).ready( function() { 
-    curIdx = 0;
+    curParaIdx = 0;
+    curSenIdx = 0;
+
+    scrollIdx = 0;
+
+    mode = 1;
+
     cnt = $('#content-text').children('p').length;
     paras = $('#content-text').children('p');
 
     $(window).bind('keydown', function(e) {
-      //window.alert(e.keyCode);
+      // window.alert(e.keyCode);
       if (e.keyCode == 83 /* s */) {
         cnt = $('#content-text').children('p').length;
         paras = $('#content-text').children('p');
@@ -44,6 +61,17 @@
       if (e.keyCode == 69 /* e */) {
         $(window).off('mousewheel');
         window.speechSynthesis.cancel();
+      }
+
+      if (e.keyCode == 73 /* i */) {
+        mode = 0;
+        curSenIdx = scrollIdx;
+        curParaIdx = scrollIdx;
+      }
+      if (e.keyCode == 79 /* o */) {
+        mode = 1;
+        curSenIdx = 0;
+        curParaIdx = scrollIdx;
       }
     });
 
@@ -65,56 +93,66 @@
   });
 
   var startTracking = function() {
-    $(window).mousewheel(function(e) {
-      console.log(e.deltaY);
-
-      if (curIdx + e.deltaY > cnt - 1) curIdx = cnt - 1;
-      else if (curIdx + e.deltaY < 0) curIdx = 0;
-      else curIdx += e.deltaY;
-      readText(curIdx);
-    });
+    // $(window).mousewheel(function(e) {
+    //   scrollIdx = mod(scrollIdx + e.deltaY, NCLICK);
+    //   readText(scrollIdx, mode);
+    // });
 
     $(window).bind('keydown', function(e) {
       if (e.keyCode == 40 /* down */) {
-        curIdx += 1;
-        readText(curIdx);
+        scrollIdx = mod(scrollIdx + 1, NCLICK);
+        readText(scrollIdx, mode);
       }
       if (e.keyCode == 38 /* up */) {
-        curIdx -= 1;
-        readText(curIdx);
+        scrollIdx = mod(scrollIdx - 1, NCLICK);
+        readText(scrollIdx, mode);
       }
     });
   };
 
-  var readText = function(index) {
-
-    if (index < 0) {curIdx = 0; return;}
-    else if (index > cnt-1) {curIdx = cnt-1; return;}
-
+  var readText = function(index, mode) {
     window.speechSynthesis.cancel();
 
-    var curText = $(paras[index]);
-
-    var msg = new SpeechSynthesisUtterance();
-    //var voices = window.speechSynthesis.getVoices();
-    //msg.voice = voices[10]; // Note: some voices don't support altering params
-    msg.voiceURI = 'native';
-    msg.volume = 1; // 0 to 1
-    msg.rate = 1.3; // 0.1 to 10
-    msg.pitch = 1; //0 to 2
-    msg.text = curText.text();
-    msg.lang = 'en-US';
-    
-    msg.onstart = function(e) {
-      curText.addClass('highlight');
-      $('#direction-y').text(curIdx);
+    var end = -1;
+    if (mode === 0 /* zoomed in */) {
+      // read one sentence
+      end = 1;
+    } else if (mode === 1 /* zoomed out */) {
+      // read the whole paragraph
+      end = NCLICK;
     }
-    
-    msg.onend = function(e) {
-      curText.removeClass('highlight');
-    };
 
-    window.speechSynthesis.speak(msg);
+    for (var i = 0; i < end; i ++) {
+      (function(ii){
+        var idx_offseted = -1;
+        if (mode === 0 /* zoomed in */) {
+          idx_offseted = curParaIdx * NCLICK + index;
+        } else if (mode === 1 /* zoomed out */) {
+          idx_offseted = index * NCLICK + ii;
+        }
+        var curText = $(paras[idx_offseted]);
+
+        var msg = new SpeechSynthesisUtterance();
+        //var voices = window.speechSynthesis.getVoices();
+        //msg.voice = voices[10]; // Note: some voices don't support altering params
+        msg.voiceURI = 'native';
+        msg.volume = 1; // 0 to 1
+        msg.rate = 1.3; // 0.1 to 10
+        msg.pitch = 1; //0 to 2
+        msg.text = curText.text();
+        msg.lang = 'en-US';
+        
+        msg.onstart = function(e) {
+          curText.addClass('highlight');
+        };
+        
+        msg.onend = function(e) {
+          curText.removeClass('highlight');
+        };
+
+        window.speechSynthesis.speak(msg);
+      }(i));
+    }
   }
 
 </script>
@@ -191,9 +229,11 @@
             <button id="btn-content" class="btn btn-default" type="button" style="margin-top: 10px; margin-bottom: 10px;">Display</button>
           </div>
           <div id="coord">
-            <span id="direction-y" class="label label-info"></span>
+            <span id="tag-idx" class="label label-info"></span>
           </div>
-          After displaying the text, press <span class="label label-warning">s</span> to start and press <span class="label label-warning">e</span> to end. Move mouse horizontally to navigate.
+          After displaying the text, press <span class="label label-warning">s</span> to start and press <span class="label label-warning">e</span> to end. <br>
+          Move mouse wheel or use the keys <span class="label label-warning">⬆</span>,<span class="label label-warning">⬇</span> to navigate. <br>
+          Use <span class="label label-warning">i</span> to zoom in navigation level and <span class="label label-warning">o</span> to zoom out. <br>
         </div>
       </div>
     </div>
