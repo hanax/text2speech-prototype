@@ -3,5 +3,6 @@
 * Switch paragraphs according to cursor/wheel movements
 * Made for accessibility research. Most accurate with Chrome + Windows + Real mouse(not trackpad)
 * [Cursor version](http://hanax.github.io/text2speech_prototype/tool_cursor.html)
-* [Mouse wheel version](http://hanax.github.io/text2speech_prototype/tool_scroll.html)
+* [Mouse wheel version: dynamic zooming](http://hanax.github.io/text2speech_prototype/tool_scroll.html)
+* [Mouse wheel version: static zooming](http://hanax.github.io/text2speech_prototype/tool_scroll_static.html)
 
