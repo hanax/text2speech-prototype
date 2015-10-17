@@ -96,10 +96,10 @@
   });
 
   var startTracking = function() {
-    // $(window).mousewheel(function(e) {
-    //   scrollIdx = mod(scrollIdx + e.deltaY, NCLICK);
-    //   readText(scrollIdx, mode);
-    // });
+    $(window).mousewheel(function(e) {
+      scrollIdx = mod(scrollIdx + e.deltaY, NCLICK);
+      readText(scrollIdx, mode);
+    });
 
     $(window).bind('keydown', function(e) {
       if (e.keyCode == 40 /* down */) {
