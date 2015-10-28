@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Navigate your text</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content = "" />
+<meta name="viewport" content="width=device-width" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="js/jquery.knob.js"></script>
+
+<style>
+  .highlight {
+    background-color: #aaa;
+    color: #fff;
+  }
+</style>
+
+<script type="text/javascript">
+  var cnt = 0;
+  var cnt_p = 0;
+
+  var cntPara = 6;
+  var cntSen = [8,5,1,2,1,4];
+
+  var paraIdx = -1;
+  var senIdx = -1;
+
+  var mode = 1;
+
+  function mod(n, m) {
+    return ((n % m) + m) % m;
+  }
+
+  var init = function() {
+    $('#tag-para-idx').text(0);
+    $('#tag-sen-idx').text(0);
+
+    paraIdx = 0;
+    senIdx = 0;
+
+    mode = 1; // default: zoomed out
+  }
+
+  $(document).ready( function() { 
+    init();
+
+    $(window).bind('keydown', function(e) {
+      // window.alert(e.keyCode);
+      if (e.keyCode == 83 /* s */) {
+        readText();
+        startTracking();
+      }
+
+      if (e.keyCode == 69 /* e */) {
+        $(window).off('mousewheel');
+        window.speechSynthesis.cancel();
+      }
+
+      if (e.keyCode == 73 /* i */) {
+        mode = 0;
+        $('.dial-inner').trigger(
+            'configure', {
+                "min": 0,
+                "max": cntSen[paraIdx]
+            }
+        );
+        readText();
+      }
+
+      if (e.keyCode == 79 /* o */) {
+        mode = 1;
+        senIdx = 0;
+        $(".dial-inner").val(0).trigger("change");
+        readText();
+      }
+
+      if (e.keyCode == 40 /* down */) {
+        if (mode === 1) {
+          paraIdx = mod(paraIdx + 1, cntPara);
+          $(".dial-outer").val(paraIdx).trigger("change");
+        } else {
+          senIdx = mod(senIdx + 1, cntSen[paraIdx]);
+          $(".dial-inner").val(senIdx).trigger("change");
+        }
+        readText();
+      }
+
+      if (e.keyCode == 38 /* up */) { 
+        if (mode === 1) {
+          paraIdx = mod(paraIdx - 1, cntPara);
+          $(".dial-outer").val(paraIdx).trigger("change");
+        } else {
+          senIdx = mod(senIdx - 1, cntSen[paraIdx]);
+          $(".dial-inner").val(senIdx).trigger("change");
+        }
+        readText();
+      }
+    });
+
+    $('#btn-content').click(function() {
+      init();
+
+      var text = $('#textarea-content').val();
+      cnt = 0;
+      var newString = text.replace(/(\r\n|\n|\r)/g, incrementer_para);
+      newString = "<p id='p0'>" + newString + "</p>";
+      cntPara = cnt+1;
+      $('#content-text').html(newString);
+
+      paras = $('#content-text').children('p');
+      for (var i = 0; i < cntPara; i ++) {
+        cnt = 0;
+        cnt_p = i;
+        var newString = $('#p' + i).text().replace(/\./g, incrementer_sen);
+        newString = "<span id='p"+cnt_p+"s0'>" + newString + "</span>";
+        $('#p' + i).html(newString);
+        cntSen[i] = cnt;
+      }
+
+      $('.dial-outer').trigger(
+          'configure', {
+              "min": 0,
+              "max": cntPara
+          }
+      );
+    });
+
+  });
+
+  var incrementer_para = (function() {
+    var fn = function(g) {
+      cnt ++;
+      return g+"</p><p id='p"+cnt+"'>";
+    };
+    fn.reset = function() {
+      cnt = 1;
+    }
+    return fn;
+  }());
+
+  var incrementer_sen = (function() {
+    var fn = function(g) {
+      cnt ++;
+      return g+"</span><span id='p"+cnt_p+"s"+cnt+"'>";
+    };
+    fn.reset = function() {
+      cnt = 1;
+    }
+    return fn;
+  }());
+
+  var startTracking = function() {
+    $(window).mousewheel(function(e) {
+      if (mode === 1) {
+        paraIdx = mod(paraIdx + e.deltaY, cntPara);
+        $(".dial-outer").val(paraIdx).trigger("change");
+      } else {
+        senIdx = mod(senIdx + e.deltaY, cntSen[paraIdx]);
+        $(".dial-inner").val(senIdx).trigger("change");
+      }
+      readText();
+    });
+  };
+
+  var readText = function() {
+    $('#tag-para-idx').text(paraIdx);
+    $('#tag-sen-idx').text(senIdx);
+    window.speechSynthesis.cancel();
+
+    var curText;
+
+    if (mode === 0 /* zoomed in */) {
+      // read one sentence
+      curText = $('#p' + paraIdx + 's' + senIdx);
+    } else if (mode === 1 /* zoomed out */) {
+      // read the whole paragraph
+      curText = $('#p' + paraIdx);
+    }
+    console.log(curText.text());
+
+    var msg = new SpeechSynthesisUtterance();
+    msg.voiceURI = 'native';
+    msg.volume = 1; // 0 to 1
+    msg.rate = 1.3; // 0.1 to 10
+    msg.pitch = 1; //0 to 2
+    msg.text = curText.text();
+    msg.lang = 'en-US';
+    
+    msg.onstart = function(e) {
+      curText.addClass('highlight');
+    };
+    
+    msg.onend = function(e) {
+      curText.removeClass('highlight');
+    };
+
+    window.speechSynthesis.speak(msg);
+
+  }
+
+  var releaseInner = function(v) {
+    mode = 0;
+    senIdx = v;
+    $('.dial-inner').trigger(
+        'configure', {
+            "min": 0,
+            "max": cntSen[paraIdx]
+        }
+    );
+    readText();
+  }
+
+  var releaseOuter = function(v) {
+    mode = 1;
+    senIdx = 0;
+    paraIdx = v;
+    $(".dial-inner").val(0).trigger("change");
+    readText();
+  }
+
+  $(function() {
+      $(".dial-inner").knob({
+        "min": 0,
+        "max": 6,
+        "release": releaseInner
+      });
+      $(".dial-outer").knob({
+        "min": 0,
+        "max": 6,
+        "release": releaseOuter
+      });
+  });
+</script>
+
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Content</h3>
+        </div>
+
+        <div class="panel-body">
+          <div id="content-text">
+<p id="p0"><span id="p0s0">In the colonnaded courtyard of the Antiguo Colegio de San Ildefonso, a former Jesuit boarding school in Mexico City, under a grove of magnolia trees hung with punched-tin stars, more than five hundred people had gathered to learn which restaurants would be proclaimed the fifty best in Latin America.</span><span id="p0s1"> The party was meant to be attended with a drink in one hand, a phone in the other.</span><span id="p0s2"> There were a multitude of bars: wine by Robert Mondavi, tequila by Casa Dragones, rum by Zacapa, champagne by Veuve Clicquot.</span><span id="p0s3"> The Modelo stand was manned by a team of studs in suspenders.</span><span id="p0s4"> Water sommeliers—white tie, white gloves, wearing tasting cups on silver chains—circulated with magnums of San Pellegrino.</span><span id="p0s5"> Inside the program, the event’s organizers, the World’s 50 Best Restaurants, had enclosed a card.</span><span id="p0s6"> It listed Twitter, Facebook, and Instagram information and a hashtag, #LatAm50Best.</span><span id="p0s7">The password for the 50 Best Wi-Fi network was Mexico2015, which had the advantage of being both dryly factual and sounding like a tourist-board come-on.</span><span id="p0s8">
+</span></p><p id="p1"><span id="p1s0">The guests were drawn mainly from three constituencies: chefs, journalists, and businesspeople—a triad that thrived as interdependently as corn, beans, and squash.</span><span id="p1s1"> The chefs ran the restaurants, which the journalists wrote about, promoting the businesspeople’s interests, so that they plowed more money into the chefs’ projects, which yielded fodder for the journalists.</span><span id="p1s2"> Onstage, the host was announcing the winners in descending order.</span><span id="p1s3"> (Seeking to extend the brand, in 2013 the World’s 50 Best Restaurants launched separate lists for Asia and Latin America.</span><span id="p1s4">) Everyone talked through the presentation, but the furious networking only heightened the excitement.</span><span id="p1s5">
+</span></p><p id="p2"><span id="p2s0">“It’s very difficult to get on the list, and it’s very difficult to get off,” an event planner said to a restaurant consultant.</span><span id="p2s1">
+</span></p><p id="p3"><span id="p3s0">“You have to work like crazy,” a chef told a reporter.</span><span id="p3s1"> “You have to do new things all the time, you have to focus on the food, you have to talk to the press.</span><span id="p3s2">”
+</span></p><p id="p4"><span id="p4s0">The lights went down, and a video extolling the gastronomy of Mexico began.</span><span id="p4s1">
+</span></p><p id="p5">“We believe that Peru has made more efforts,” a government official at one of the tables remarked, of the P.R. offensive. “Now, in Mexico, we have a policy for culinary diplomacy.”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4"> 
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Instruction</h3>
+        </div>
+
+        <div class="panel-body">
+          <div>
+            <textarea id="textarea-content" type="text" class="form-control"></textarea>
+            <button id="btn-content" class="btn btn-default" type="button" style="margin-top: 10px; margin-bottom: 10px;">Display</button>
+          </div>
+          <div id="coord">
+            <span id="tag-para-idx" class="label label-warning"></span>
+            <span id="tag-sen-idx" class="label label-info"></span>
+          </div>
+          After displaying the text, press <span class="label label-success">s</span> to start and press <span class="label label-success">e</span> to end. <br>
+          Move mouse wheel or use the keys <span class="label label-success">⬆</span>,<span class="label label-success">⬇</span> to navigate. You may also use the virtual controller on the right bottom to navigate. <br>
+          Use <span class="label label-success">i</span> to zoom in navigation level and <span class="label label-success">o</span> to zoom out. <br>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Virtual Controller</h3>
+        </div>
+
+        <div class="panel-body">
+          <div style="position: relative; width:100%; height:300px; margin:auto">
+            <div style="position: absolute; left:10px; top:10px">
+              <input type="text" value="0" class="dial-outer" data-fgColor="#ffec03" data-width="250" data-height="250" data-thickness=".3" data-displayPrevious=true>
+            </div>
+            <div style="position: absolute; left:60px; top:60px">
+              <input type="text" value="0" class="dial-inner" data-width="150" data-height="150" data-thickness=".3" data-displayPrevious=true data-displayInput=false>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
