@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Navigate your text</title>
+
+<meta name="renderer" content="webkit" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.doubletap.js"></script>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+
+<style>
+  body {
+    overflow: hidden;
+    word-wrap: break-word;
+  }
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: #ff0000;
+  }
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: #ff0000;
+  }
+  .control-area {
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    background: #ccc;
+  }
+  #log {
+    font-size: 50px;
+  }
+  #f-log {
+    font-size: 40px;
+    color: #00cc00;
+  }
+</style>
+
+<script type="text/javascript">
+
+  var cnt = 6;
+
+  var interval;
+
+  var topBound, bottomBound;
+
+  var isFindingMode = false;
+  var targetIdx = -1;
+
+  var paraIdx = 0;
+  var senIdx = 0;
+
+  var THRESHOLD = 10;
+
+  var updateCnt = function(newCnt) {
+    cnt = newCnt;
+    interval = (bottomBound - topBound) / cnt;
+  }
+
+  var dataRef = new Firebase('https://luminous-inferno-6049.firebaseio.com/');
+  window.dataRef = dataRef;
+  dataRef.on('value', function(snapshot) {
+
+    $("#f-log").html(JSON.stringify(snapshot.val()));
+    console.log(snapshot.val());
+
+    updateCnt(snapshot.val().cnt);
+
+    targetIdx = snapshot.val().targetIdx;
+    isFindingMode = targetIdx == -1 ? false : true;
+  });
+
+  $(document).ready( function() {
+    // navigator.vibrate = navigator.vibrate ||
+    //   navigator.webkitVibrate ||
+    //   navigator.mozVibrate || 
+    //   navigator.msVibrate;
+
+    topBound = 40;
+    bottomBound = $(".bottom-bar").position().top;
+
+    var isVibrating = false;
+
+    $("body").bind(
+      "touchmove mousemove",
+      function(e) {
+        e.preventDefault();
+
+        var posY = e.originalEvent.touches ? 
+            e.originalEvent.touches[0].pageY : e.pageY;
+        posY = posY < bottomBound ? posY : bottomBound;
+        posY = posY > topBound ? posY : topBound;
+
+
+        if (Math.abs((posY - topBound) % interval - interval / 2) <= THRESHOLD) {
+          if (isVibrating === false) {
+            isVibrating = true;
+
+            var curIdx = Math.floor((posY - topBound) / interval);
+            $("#log").html(curIdx);
+
+            if (!isFindingMode) {
+              // send curIdx to desktop
+              dataRef.update({action: "move", idx: curIdx});
+
+              // navigator.vibrate(500);
+            } else {
+              if (curIdx === targetIdx) {
+                // found
+                dataRef.update({idx: curIdx, targetIdx: -1});
+                // navigator.vibrate(1000);
+              }
+            }
+          }
+        } else {
+          isVibrating = false;
+        }
+      }
+    );
+
+    $("body").doubletap(
+      function(e){
+        $("#log").html("double tap!");
+        // send zooming info to desktop (idx = -1)
+        dataRef.update({action: "zoom", idx: -1});
+      }, null, 200
+    );
+
+  });
+</script>
+
+</head>
+
+<body>
+
+<div class="top-bar"> </div>
+
+<div class="control-area">
+
+  <div id="log"> log here </div>
+  <div id="f-log"> firebase log here </div>
+
+</div>
+
+<div class="bottom-bar"> </div>
+
+</body>
+</html>

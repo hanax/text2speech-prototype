@@ -14,8 +14,8 @@
 
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
-<script type="text/javascript" src="js/jquery.mousewheel.js"></script>
-<script type="text/javascript" src="js/jquery.knob.js"></script>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+
 
 <style>
   .highlight {
@@ -25,6 +25,7 @@
 </style>
 
 <script type="text/javascript">
+
   var cnt = 0;
   var cnt_p = 0;
 
@@ -35,6 +36,41 @@
   var senIdx = -1;
 
   var mode = 1;
+
+  var inZoomMode = false;
+
+  var dataRef = new Firebase('https://luminous-inferno-6049.firebaseio.com/');
+  window.dataRef = dataRef;
+
+  dataRef.set({action: "init", cnt: 6, idx:0, targetIdx:-1});
+  dataRef.on('value', function(snapshot) {
+    console.log(snapshot.val());
+    if (snapshot.val().action == "init") return;
+
+    var idx = snapshot.val().idx;
+
+    if (idx === -1 && !inZoomMode) { // zoom
+      mode = 1-mode;
+      inZoomMode = true;
+      if (mode === 0) {
+        dataRef.update({cnt: cntSen[paraIdx], targetIdx: -1});
+      } else {
+        dataRef.update({cnt: cntPara, targetIdx: paraIdx});
+
+        senIdx = 0;
+      }
+
+    } else { // navigate
+      inZoomMode = false;
+
+      if (mode === 1) {
+        paraIdx = idx;
+      } else {
+        senIdx = idx;
+      }
+      readText();
+    }
+  });
 
   function mod(n, m) {
     return ((n % m) + m) % m;
@@ -52,44 +88,40 @@
 
   $(document).ready( function() { 
     init();
+    dataRef.set({action: "init", cnt: cntPara, idx:0, targetIdx:-1});
 
     $(window).bind('keydown', function(e) {
-      // window.alert(e.keyCode);
       if (e.keyCode == 83 /* s */) {
         readText();
-        // startTracking();
       }
 
       if (e.keyCode == 69 /* e */) {
-        // $(window).off('mousewheel');
         window.speechSynthesis.cancel();
       }
 
       if (e.keyCode == 73 /* i */) {
+        // Update click number (cntSen[paraIdx])
+        dataRef.update({cnt: cntSen[paraIdx]});
         mode = 0;
-        $('.dial-inner').trigger(
-            'configure', {
-                "min": 0,
-                "max": cntSen[paraIdx]
-            }
-        );
         readText();
       }
 
       if (e.keyCode == 79 /* o */) {
+        // Update click number (cntPara)
+        dataRef.update({cnt: cntPara});
+        // Tell phone where to start (paraIdx)
+        dataRef.update({targetIdx: paraIdx});
+
         mode = 1;
         senIdx = 0;
-        $(".dial-inner").val(0).trigger("change");
         readText();
       }
 
       if (e.keyCode == 40 /* down */) {
         if (mode === 1) {
           paraIdx = mod(paraIdx + 1, cntPara);
-          $(".dial-outer").val(paraIdx).trigger("change");
         } else {
           senIdx = mod(senIdx + 1, cntSen[paraIdx]);
-          $(".dial-inner").val(senIdx).trigger("change");
         }
         readText();
       }
@@ -97,10 +129,8 @@
       if (e.keyCode == 38 /* up */) { 
         if (mode === 1) {
           paraIdx = mod(paraIdx - 1, cntPara);
-          $(".dial-outer").val(paraIdx).trigger("change");
         } else {
           senIdx = mod(senIdx - 1, cntSen[paraIdx]);
-          $(".dial-inner").val(senIdx).trigger("change");
         }
         readText();
       }
@@ -111,9 +141,11 @@
 
       var text = $('#textarea-content').val();
       cnt = 0;
-      var newString = text.replace(/(\r\n|\n|\r)/g, incrementer_para);
+      var newString = text.replace(/(\r\n|\n|\r)+/g, incrementer_para);
       newString = "<p id='p0'>" + newString + "</p>";
       cntPara = cnt+1;
+
+      dataRef.set({action: "init", cnt: cntPara, idx:0, targetIdx:-1});
       $('#content-text').html(newString);
 
       paras = $('#content-text').children('p');
@@ -125,13 +157,6 @@
         $('#p' + i).html(newString);
         cntSen[i] = cnt;
       }
-
-      $('.dial-outer').trigger(
-          'configure', {
-              "min": 0,
-              "max": cntPara
-          }
-      );
     });
 
   });
@@ -158,19 +183,6 @@
     return fn;
   }());
 
-  var startTracking = function() {
-    $(window).mousewheel(function(e) {
-      if (mode === 1) {
-        paraIdx = mod(paraIdx + e.deltaY, cntPara);
-        $(".dial-outer").val(paraIdx).trigger("change");
-      } else {
-        senIdx = mod(senIdx + e.deltaY, cntSen[paraIdx]);
-        $(".dial-inner").val(senIdx).trigger("change");
-      }
-      readText();
-    });
-  };
-
   var readText = function() {
     $('#tag-para-idx').text(paraIdx);
     $('#tag-sen-idx').text(senIdx);
@@ -185,7 +197,7 @@
       // read the whole paragraph
       curText = $('#p' + paraIdx);
     }
-    console.log(curText.text());
+    // console.log(curText.text());
 
     var msg = new SpeechSynthesisUtterance();
     msg.voiceURI = 'native';
@@ -207,39 +219,6 @@
 
 
   }
-
-  var releaseInner = function(v) {
-    mode = 0;
-    senIdx = v;
-    $('.dial-inner').trigger(
-        'configure', {
-            "min": 0,
-            "max": cntSen[paraIdx]
-        }
-    );
-    readText();
-  }
-
-  var releaseOuter = function(v) {
-    mode = 1;
-    senIdx = 0;
-    paraIdx = v;
-    $(".dial-inner").val(0).trigger("change");
-    readText();
-  }
-
-  $(function() {
-      $(".dial-inner").knob({
-        "min": 0,
-        "max": 6,
-        "release": releaseInner
-      });
-      $(".dial-outer").knob({
-        "min": 0,
-        "max": 6,
-        "release": releaseOuter
-      });
-  });
 </script>
 
 </head>
@@ -288,22 +267,6 @@
         </div>
       </div>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Virtual Controller</h3>
-        </div>
-
-        <div class="panel-body">
-          <div style="position: relative; width:100%; height:300px; margin:auto">
-            <div style="position: absolute; left:10px; top:10px">
-              <input type="text" value="0" class="dial-outer" data-fgColor="#ffec03" data-width="250" data-height="250" data-thickness=".3" data-displayPrevious=true>
-            </div>
-            <div style="position: absolute; left:60px; top:60px">
-              <input type="text" value="0" class="dial-inner" data-width="150" data-height="150" data-thickness=".3" data-displayPrevious=true data-displayInput=false>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>
