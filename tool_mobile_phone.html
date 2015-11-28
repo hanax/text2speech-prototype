@@ -118,12 +118,14 @@
               // send curIdx to desktop
               dataRef.update({action: "move", idx: curIdx});
 
+              $(".audioClick").trigger('play');
               // navigator.vibrate(500);
             } else {
               if (curIdx === targetIdx) {
                 // found
                 dataRef.update({idx: curIdx, targetIdx: -1});
                 // navigator.vibrate(1000);
+                $(".audioClick").trigger('play');
               }
             }
           }
@@ -137,6 +139,7 @@
       function(e){
         $("#log").html("double tap!");
         // send zooming info to desktop (idx = -1)
+        $(".audioZoom").trigger('play');
         dataRef.update({action: "zoom", idx: -1});
       }, null, 200
     );
@@ -159,5 +162,7 @@
 
 <div class="bottom-bar"> </div>
 
+<audio class="audioClick" src="sound.wav" ></audio>
+<audio class="audioZoom" src="zoom.mp3" ></audio>
 </body>
 </html>
