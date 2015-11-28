@@ -118,6 +118,7 @@
               // send curIdx to desktop
               dataRef.update({action: "move", idx: curIdx});
 
+              $(".audioClick").trigger('stop');
               $(".audioClick").trigger('play');
               // navigator.vibrate(500);
             } else {
@@ -125,6 +126,7 @@
                 // found
                 dataRef.update({idx: curIdx, targetIdx: -1});
                 // navigator.vibrate(1000);
+                $(".audioClick").trigger('stop');
                 $(".audioClick").trigger('play');
               }
             }
