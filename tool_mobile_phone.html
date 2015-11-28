@@ -118,16 +118,16 @@
               // send curIdx to desktop
               dataRef.update({action: "move", idx: curIdx});
 
-              $(".audioClick").trigger('stop');
-              $(".audioClick").trigger('play');
+              // $(".audioClick").trigger('stop');
+              // $(".audioClick").trigger('play');
               // navigator.vibrate(500);
             } else {
               if (curIdx === targetIdx) {
                 // found
                 dataRef.update({idx: curIdx, targetIdx: -1});
                 // navigator.vibrate(1000);
-                $(".audioClick").trigger('stop');
-                $(".audioClick").trigger('play');
+                // $(".audioClick").trigger('stop');
+                // $(".audioClick").trigger('play');
               }
             }
           }
@@ -164,7 +164,7 @@
 
 <div class="bottom-bar"> </div>
 
-<audio class="audioClick" src="click.mp3" ></audio>
-<audio class="audioZoom" src="zoom.mp3" ></audio>
+<!-- <audio class="audioClick" src="click.mp3" ></audio>
+<audio class="audioZoom" src="zoom.mp3" ></audio> -->
 </body>
 </html>

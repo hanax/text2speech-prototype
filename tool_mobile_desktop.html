@@ -50,6 +50,9 @@
     var idx = snapshot.val().idx;
 
     if (idx === -1 && !inZoomMode) { // zoom
+      $(".audioZoom").trigger('stop');
+      $(".audioZoom").trigger('play');
+
       mode = 1-mode;
       inZoomMode = true;
       if (mode === 0) {
@@ -62,6 +65,8 @@
 
     } else { // navigate
       inZoomMode = false;
+      $(".audioClick").trigger('stop');
+      $(".audioClick").trigger('play');
 
       if (mode === 1) {
         paraIdx = idx;
@@ -271,6 +276,7 @@
 
   </div>
 </div>
-
+<audio class="audioClick" src="click.mp3" ></audio>
+<audio class="audioZoom" src="zoom.mp3" ></audio>
 </body>
 </html>
