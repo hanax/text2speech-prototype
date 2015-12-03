@@ -54,6 +54,7 @@
       $(".audioZoom").trigger('play');
 
       mode = 1-mode;
+      window.speechSynthesis.cancel();
       inZoomMode = true;
       if (mode === 0) {
         dataRef.update({cnt: cntSen[paraIdx], targetIdx: -1});
@@ -194,6 +195,7 @@
     $('#tag-para-idx').text(paraIdx);
     $('#tag-sen-idx').text(senIdx);
     window.speechSynthesis.cancel();
+    $('p').removeClass('highlight');
 
     if (mode === 0 /* zoomed in */) {
       // read one sentence
@@ -218,7 +220,6 @@
 
     } else if (mode === 1 /* zoomed out */) {
       // read the whole paragraph;
-      $('p').removeClass('highlight');
       curTextPara = $('#p' + paraIdx);
       for (var i = 0; i < cntSen[paraIdx]; i ++) {
         (function(ii){

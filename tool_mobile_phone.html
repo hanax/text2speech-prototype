@@ -23,7 +23,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 40px;
+    width: 20px;
     background: #ff0000;
   }
   .right-bar {
@@ -31,13 +31,13 @@
     top: 0;
     right: 0;
     height: 100%;
-    width: 40px;
+    width: 20px;
     background: #ff0000;
   }
   .control-area {
     position: absolute;
-    left: 40px;
-    right: 40px;
+    left: 20px;
+    right: 20px;
     top: 0;
     height: 100%;
     background: #ccc;
@@ -67,7 +67,7 @@
   var paraIdx = 0;
   var senIdx = 0;
 
-  var THRESHOLD = 10;
+  var THRESHOLD = 8;
 
   var updateCnt = function(newCnt) {
     cnt = newCnt;
@@ -93,7 +93,7 @@
     //   navigator.mozVibrate || 
     //   navigator.msVibrate;
 
-    leftBound = 40;
+    leftBound = 20;
     rightBound = $(".right-bar").position().left;
 
     var isVibrating = false;
