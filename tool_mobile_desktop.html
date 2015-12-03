@@ -193,35 +193,60 @@
     $('#tag-sen-idx').text(senIdx);
     window.speechSynthesis.cancel();
 
-    var curText;
-
     if (mode === 0 /* zoomed in */) {
       // read one sentence
-      curText = $('#p' + paraIdx + 's' + senIdx);
+      var curText = $('#p' + paraIdx + 's' + senIdx);
+      var msg = new SpeechSynthesisUtterance();
+      msg.voiceURI = 'Google UK English Male';
+      msg.volume = 1; // 0 to 1
+      msg.rate = 1; // 0.1 to 10
+      msg.pitch = 1; //0 to 2
+      msg.text = curText.text();
+      msg.lang = 'en-US';
+      
+      window.speechSynthesis.speak(msg);
+
+      msg.onstart = function(e) {
+        curText.addClass('highlight');
+      };
+      
+      msg.onend = function(e) {
+        curText.removeClass('highlight');
+      };
+
     } else if (mode === 1 /* zoomed out */) {
-      // read the whole paragraph
-      curText = $('#p' + paraIdx);
+      // read the whole paragraph;
+      $('p').removeClass('highlight');
+      curTextPara = $('#p' + paraIdx);
+      for (var i = 0; i < cntSen[paraIdx]; i ++) {
+        (function(ii){
+          var curText = $('#p' + paraIdx + 's' + ii);
+          console.log(curText);
+
+          var msg = new SpeechSynthesisUtterance();
+          msg.voiceURI = 'native';
+          msg.volume = 1; // 0 to 1
+          msg.rate = 1; // 0.1 to 10
+          msg.pitch = 1; //0 to 2
+          msg.text = curText.text();
+          msg.lang = 'en-US';
+          
+          window.speechSynthesis.speak(msg);
+
+          if (ii === 0) {
+            msg.onstart = function(e) {
+              curTextPara.addClass('highlight');
+            };
+          }
+          if (ii === cntSen[paraIdx] - 1) {
+            msg.onend = function(e) {
+              curTextPara.removeClass('highlight');
+            };
+          }
+        }(i));
+
+      }
     }
-    // console.log(curText.text());
-
-    var msg = new SpeechSynthesisUtterance();
-    msg.voiceURI = 'native';
-    msg.volume = 1; // 0 to 1
-    msg.rate = 1.3; // 0.1 to 10
-    msg.pitch = 1; //0 to 2
-    msg.text = curText.text();
-    msg.lang = 'en-US';
-    
-    window.speechSynthesis.speak(msg);
-
-    msg.onstart = function(e) {
-      curText.addClass('highlight');
-    };
-    
-    msg.onend = function(e) {
-      curText.removeClass('highlight');
-    };
-
 
   }
 </script>

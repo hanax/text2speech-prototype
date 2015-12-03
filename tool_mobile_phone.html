@@ -18,7 +18,7 @@
     overflow: hidden;
     word-wrap: break-word;
   }
-  .top-bar {
+  .left-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -26,7 +26,7 @@
     height: 40px;
     background: #ff0000;
   }
-  .bottom-bar {
+  .right-bar {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -43,9 +43,11 @@
     background: #ccc;
   }
   #log {
+    display: none;
     font-size: 50px;
   }
   #f-log {
+    display: none;
     font-size: 40px;
     color: #00cc00;
   }
@@ -57,7 +59,7 @@
 
   var interval;
 
-  var topBound, bottomBound;
+  var leftBound, rightBound;
 
   var isFindingMode = false;
   var targetIdx = -1;
@@ -69,7 +71,7 @@
 
   var updateCnt = function(newCnt) {
     cnt = newCnt;
-    interval = (bottomBound - topBound) / cnt;
+    interval = (rightBound - leftBound) / cnt;
   }
 
   var dataRef = new Firebase('https://luminous-inferno-6049.firebaseio.com/');
@@ -91,8 +93,8 @@
     //   navigator.mozVibrate || 
     //   navigator.msVibrate;
 
-    topBound = 40;
-    bottomBound = $(".bottom-bar").position().top;
+    leftBound = 40;
+    rightBound = $(".right-bar").position().left;
 
     var isVibrating = false;
 
@@ -101,17 +103,17 @@
       function(e) {
         e.preventDefault();
 
-        var posY = e.originalEvent.touches ? 
-            e.originalEvent.touches[0].pageY : e.pageY;
-        posY = posY < bottomBound ? posY : bottomBound;
-        posY = posY > topBound ? posY : topBound;
+        var posX = e.originalEvent.touches ? 
+            e.originalEvent.touches[0].pageX : e.pageX;
+        posX = posX < rightBound ? posX : rightBound;
+        posX = posX > leftBound ? posX : leftBound;
 
 
-        if (Math.abs((posY - topBound) % interval - interval / 2) <= THRESHOLD) {
+        if (Math.abs((posX - leftBound) % interval - interval / 2) <= THRESHOLD) {
           if (isVibrating === false) {
             isVibrating = true;
 
-            var curIdx = Math.floor((posY - topBound) / interval);
+            var curIdx = Math.floor((posX - leftBound) / interval);
             $("#log").html(curIdx);
 
             if (!isFindingMode) {
@@ -153,7 +155,7 @@
 
 <body>
 
-<div class="top-bar"> </div>
+<div class="left-bar"> </div>
 
 <div class="control-area">
 
@@ -162,7 +164,7 @@
 
 </div>
 
-<div class="bottom-bar"> </div>
+<div class="right-bar"> </div>
 
 <!-- <audio class="audioClick" src="click.mp3" ></audio>
 <audio class="audioZoom" src="zoom.mp3" ></audio> -->
