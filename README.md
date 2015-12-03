@@ -4,7 +4,7 @@
 
 Use mobile / virtual controller:
 * Mobile control: Control the screen reader with your phone
-  * [Open with your phone] (http://hanax.github.io/text2speech_prototype/tool_mobile_phone.html): Swipe vertically to navigate and double tap to zoom within paragragh/sentence
+  * [Open with your phone] (http://hanax.github.io/text2speech_prototype/tool_mobile_phone.html): Use landscape view. Swipe horizontally to navigate and double tap to zoom within paragragh/sentence
   * [Open with desktop] (http://hanax.github.io/text2speech_prototype/tool_mobile_desktop.html)
 * [Mouse wheel control: dynamic zooming with virtual controller](http://hanax.github.io/text2speech_prototype/tool_scroll_w_visual_cue.html)
 
