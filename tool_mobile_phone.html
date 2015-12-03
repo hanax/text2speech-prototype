@@ -98,6 +98,10 @@
 
     var isVibrating = false;
 
+    $(window).on("orientationchange", function(event) {
+      rightBound = $(".right-bar").position().left;
+    });
+
     $("body").bind(
       "touchmove mousemove",
       function(e) {
